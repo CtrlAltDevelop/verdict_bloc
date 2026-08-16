@@ -1,0 +1,12 @@
+# The package's own options require doc comments on every public member; an
+# example is read as a whole file, so it opts out of that rule only.
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
+include: package:flutter_lints/flutter.yaml
