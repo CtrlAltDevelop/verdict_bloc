@@ -5,8 +5,8 @@
 ///
 /// ```dart
 /// @override
-/// Future<Result<PagedData<Ticket>>> fetchPage(TicketFilter filter) async {
-///   final result = await _getTickets(filter);
+/// Future<Result<PagedData<Item>>> fetchPage(ItemFilter filter) async {
+///   final result = await _api.list(filter);
 ///   return result.map(
 ///     (response) => PagedData(
 ///       data: response.items,

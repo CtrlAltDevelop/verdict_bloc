@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:verdict/verdict.dart';
+import 'failure.dart';
 
 import 'app_bloc_feedback.dart';
 import 'app_bloc_state.dart';

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:verdict/verdict.dart';
+import 'failure.dart';
+import 'result.dart';
 
 import 'app_bloc_state.dart';
 import 'paged_data.dart';
@@ -18,24 +19,24 @@ part 'generic_list_state.dart';
 /// - [withPaging] — return a copy of a filter with paging applied.
 ///
 /// ```dart
-/// class TicketsBloc extends GenericListBloc<Ticket, TicketFilter> {
-///   TicketsBloc(this._getTickets);
+/// class ItemsBloc extends GenericListBloc<Item, ItemFilter> {
+///   ItemsBloc(this._api);
 ///
-///   final GetTickets _getTickets;
-///
-///   @override
-///   TicketFilter get defaultFilter => const TicketFilter();
+///   final ItemApi _api;
 ///
 ///   @override
-///   TicketFilter withPaging(
-///     TicketFilter filter, {
+///   ItemFilter get defaultFilter => const ItemFilter();
+///
+///   @override
+///   ItemFilter withPaging(
+///     ItemFilter filter, {
 ///     required int skip,
 ///     required int take,
 ///   }) => filter.copyWith(skip: skip, take: take);
 ///
 ///   @override
-///   Future<Result<PagedData<Ticket>>> fetchPage(TicketFilter filter) async =>
-///       (await _getTickets(filter)).map(
+///   Future<Result<PagedData<Item>>> fetchPage(ItemFilter filter) async =>
+///       (await _api.list(filter)).map(
 ///         (page) => PagedData(data: page.items, totalCount: page.total),
 ///       );
 /// }
