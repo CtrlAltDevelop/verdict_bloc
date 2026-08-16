@@ -1,0 +1,36 @@
+name: verdict_bloc
+description: >-
+  BLoC state built on verdict: transient error and success states keep the
+  last known good data, so the UI never blanks. Includes a paginated list bloc.
+version: 0.1.0
+homepage: https://github.com/CtrlAltDevelop
+repository: https://github.com/CtrlAltDevelop/verdict_bloc
+issue_tracker: https://github.com/CtrlAltDevelop/verdict_bloc/issues
+
+topics:
+  - bloc
+  - state-management
+  - error-handling
+  - pagination
+  - result
+
+environment:
+  sdk: ^3.6.0
+  flutter: ">=3.27.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  equatable: ^2.0.0
+  flutter_bloc: ^9.0.0
+  verdict: ^0.1.0
+
+dev_dependencies:
+  bloc_test: ^10.0.0
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+
+dependency_overrides:
+  verdict:
+    path: ../verdict
