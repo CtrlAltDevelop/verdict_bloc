@@ -1,8 +1,7 @@
 # verdict_bloc
 
-BLoC state built on [`verdict`](https://pub.dev/packages/verdict), where
-**transient states carry the last known good data**. Reporting an error or a
-success never blanks the screen behind it.
+BLoC state where **transient states carry the last known good data**.
+Reporting an error or a success never blanks the screen behind it.
 
 Plus `GenericListBloc`, which turns a paginated endpoint into a list with
 first-load, pull-to-refresh, infinite scroll and filtering in about twenty
@@ -60,8 +59,16 @@ dependencies:
   verdict_bloc: ^0.1.0
 ```
 
-`verdict` is re-exported, so one import gets you `Result`, `Failure` and
-everything here.
+That is the whole install. The package is self-contained: it carries its own
+`Result` and `Failure`, so one import gets you everything here and it pulls in
+no error-handling dependency of its own.
+
+> **Relationship to [`verdict`](https://pub.dev/packages/verdict).** That
+> sibling package offers the same `Result` and `Failure` on their own, with no
+> Flutter dependency, for pure-Dart code — a server, a CLI, a shared domain
+> package. The two are independent by design: a `Failure` from one is *not* a
+> `Failure` from the other, and importing both in one file requires a prefix.
+> Pick one per layer rather than mixing them.
 
 ## Reporting: bring your own UI
 
@@ -116,12 +123,14 @@ class ProfilePage extends AppBlocPage<ProfileBloc, ProfileState, ProfileReady> {
 }
 ```
 
+Override any of `onError` / `onSuccess` / `onWarning` / `onInfo` to handle
+reports differently on one screen; call `super` if you also want the app-wide
+behaviour.
+
 Override `manageBloc => false` when `createBloc` returns a shared or singleton
-bloc that must outlive the page. Note that with `manageBloc: false`,
-`createBloc` runs on every build of the page, so it must be a plain lookup —
-put no `..add(SomeEvent())` on it, or the event fires again on each rebuild. Override any of `onError` / `onSuccess` /
-`onWarning` / `onInfo` to handle reports differently on one screen; call
-`super` if you also want the app-wide behaviour.
+bloc that must outlive the page. With `manageBloc: false`, `createBloc` runs on
+every build of the page, so it must be a plain lookup — put no
+`..add(SomeEvent())` on it, or the event fires again on each rebuild.
 
 If you already have your own page structure, use `AppBlocConsumer` directly —
 it takes a `builder` and expects a `BlocProvider` above it.
@@ -145,27 +154,27 @@ Subclass `GenericListBloc<T, F>` over your item type `T` and filter type `F`,
 implement three members, and you have the whole list:
 
 ```dart
-class TicketsBloc extends GenericListBloc<Ticket, TicketFilter> {
-  TicketsBloc(this._getTickets);
+class ItemsBloc extends GenericListBloc<Item, ItemFilter> {
+  ItemsBloc(this._api);
 
-  final GetTickets _getTickets;
+  final ItemApi _api;
 
   @override
   int get pageSize => 20; // optional; 20 is the default
 
   @override
-  TicketFilter get defaultFilter => const TicketFilter();
+  ItemFilter get defaultFilter => const ItemFilter();
 
   @override
-  TicketFilter withPaging(
-    TicketFilter filter, {
+  ItemFilter withPaging(
+    ItemFilter filter, {
     required int skip,
     required int take,
   }) => filter.copyWith(skip: skip, take: take);
 
   @override
-  Future<Result<PagedData<Ticket>>> fetchPage(TicketFilter filter) async =>
-      (await _getTickets(filter))
+  Future<Result<PagedData<Item>>> fetchPage(ItemFilter filter) async =>
+      (await _api.list(filter))
           .map((page) => PagedData(data: page.items, totalCount: page.total));
 }
 ```
