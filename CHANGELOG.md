@@ -1,3 +1,19 @@
+## 1.0.0
+
+Raises the minimum toolchain to Dart 3.13.0 and Flutter 3.47.0. Projects still
+on an older SDK should stay on 0.1.0, which they continue to resolve to.
+
+`Result`, `Failure`, `FailureMapper`, `guard` / `guardSync` and `failureOrigin`
+are no longer vendored here — they now come from
+[`verdict`](https://pub.dev/packages/verdict) 1.0.0, which this package
+re-exports in full. No import changes are needed: the names are still reachable
+from `package:verdict_bloc/verdict_bloc.dart`, and the types are unchanged.
+
+The upside is that the types are now *shared* rather than merely identical. A
+pure-Dart layer depending on `verdict` produces `Failure`s your blocs accept
+directly — previously the two packages' types were deliberately independent and
+could not be mixed.
+
 ## 0.1.0
 
 Initial release.

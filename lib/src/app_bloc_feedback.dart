@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'failure.dart';
+import 'package:verdict/verdict.dart';
 
 /// Renders the transient reports an [AppBlocState] emits.
 ///

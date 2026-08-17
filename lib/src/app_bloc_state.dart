@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'failure.dart';
+import 'package:verdict/verdict.dart';
 
 /// What a state represents, so listeners can react without `is` checks.
 enum AppBlocStateKind {

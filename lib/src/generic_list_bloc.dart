@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'failure.dart';
-import 'result.dart';
+import 'package:verdict/verdict.dart';
 
 import 'app_bloc_state.dart';
 import 'paged_data.dart';

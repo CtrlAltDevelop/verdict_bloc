@@ -56,19 +56,19 @@ void _onRefresh(Refresh event, Emitter<ProfileState> emit) async {
 
 ```yaml
 dependencies:
-  verdict_bloc: ^0.1.0
+  verdict_bloc: ^0.2.0
 ```
 
-That is the whole install. The package is self-contained: it carries its own
-`Result` and `Failure`, so one import gets you everything here and it pulls in
-no error-handling dependency of its own.
+That is the whole install. `Result` and `Failure` come from
+[`verdict`](https://pub.dev/packages/verdict), which this package depends on
+and re-exports in full, so a single `package:verdict_bloc/verdict_bloc.dart`
+import still gets you everything here.
 
-> **Relationship to [`verdict`](https://pub.dev/packages/verdict).** That
-> sibling package offers the same `Result` and `Failure` on their own, with no
-> Flutter dependency, for pure-Dart code — a server, a CLI, a shared domain
-> package. The two are independent by design: a `Failure` from one is *not* a
-> `Failure` from the other, and importing both in one file requires a prefix.
-> Pick one per layer rather than mixing them.
+> **Sharing the types with pure-Dart layers.** `verdict` carries no Flutter
+> dependency, so a server, a CLI or a shared domain package can depend on it
+> directly and hand its `Result`s straight to your blocs. Both halves of the
+> app then speak in one `Failure` type — no adapter, no prefix, and
+> `switch` stays exhaustive across the boundary.
 
 ## Reporting: bring your own UI
 

@@ -5,21 +5,19 @@
 /// [AppBlocConsumer] for your screens, and one [AppBlocFeedbackDelegate] to
 /// decide how reports are rendered. [GenericListBloc] covers paginated lists.
 ///
-/// This package is self-contained: it carries its own [Result] and [Failure]
-/// and depends on no other package for them. The sibling package
-/// [verdict](https://pub.dev/packages/verdict) offers the same two types on
-/// their own, for pure-Dart code that wants them without Flutter. The types
-/// are independent — a `Failure` from one package is not a `Failure` from the
-/// other — so pick one per layer rather than mixing them.
+/// [Result] and [Failure] come from
+/// [verdict](https://pub.dev/packages/verdict), which this package re-exports
+/// in full — importing `verdict_bloc` is enough to get them. Pure-Dart layers
+/// that want the same two types without Flutter can depend on `verdict`
+/// directly, and both halves of the app then speak in one `Failure` type.
 library;
+
+export 'package:verdict/verdict.dart';
 
 export 'src/app_bloc_consumer.dart';
 export 'src/app_bloc_event.dart';
 export 'src/app_bloc_feedback.dart';
 export 'src/app_bloc_page.dart';
 export 'src/app_bloc_state.dart';
-export 'src/failure.dart';
-export 'src/failure_mapper.dart';
 export 'src/generic_list_bloc.dart';
 export 'src/paged_data.dart';
-export 'src/result.dart';
