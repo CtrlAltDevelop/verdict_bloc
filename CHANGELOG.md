@@ -1,3 +1,8 @@
+## 1.0.1
+
+Shortens the package description to pub.dev's 180-character limit and relaxes
+the `verdict` dependency to `^1.0.0` so it no longer pins a single version.
+
 ## 1.0.0
 
 Raises the minimum toolchain to Dart 3.13.0 and Flutter 3.47.0. Projects still

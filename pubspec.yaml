@@ -1,9 +1,6 @@
 name: verdict_bloc
-description: >-
-  BLoC state where transient error and success states keep the last known good
-  data, so the UI never blanks. Built on verdict's Result and Failure, with a
-  paginated list bloc included.
-version: 1.0.0
+description: BLoC states that keep the last known good data through error and loading, plus a paginated list bloc, built on verdict's Result and Failure.
+version: 1.0.1
 homepage: https://github.com/CtrlAltDevelop
 repository: https://github.com/CtrlAltDevelop/verdict_bloc
 issue_tracker: https://github.com/CtrlAltDevelop/verdict_bloc/issues
@@ -24,7 +21,7 @@ dependencies:
     sdk: flutter
   equatable: ^2.1.0
   flutter_bloc: ^9.1.1
-  verdict: 1.0.0
+  verdict: ^1.0.0
 
 dev_dependencies:
   bloc_test: ^10.0.0
