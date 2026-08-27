@@ -1,6 +1,6 @@
 name: verdict_bloc
 description: BLoC states that keep the last known good data through error and loading, plus a paginated list bloc, built on verdict's Result and Failure.
-version: 1.0.1
+version: 1.1.0
 homepage: https://github.com/CtrlAltDevelop
 repository: https://github.com/CtrlAltDevelop/verdict_bloc
 issue_tracker: https://github.com/CtrlAltDevelop/verdict_bloc/issues
@@ -13,18 +13,20 @@ topics:
   - result
 
 environment:
-  sdk: ^3.13.0
-  flutter: ">=3.47.0"
+  # Dart 3.0 is the real floor: the package uses sealed classes, class
+  # modifiers and pattern matching, and nothing newer.
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  equatable: ^2.1.0
-  flutter_bloc: ^9.1.1
-  verdict: ^1.0.0
+  equatable: ">=2.0.5 <3.0.0"
+  flutter_bloc: ">=8.1.0 <10.0.0"
+  verdict: ">=1.1.0 <2.0.0"
 
 dev_dependencies:
-  bloc_test: ^10.0.0
-  flutter_lints: ^6.0.0
+  bloc_test: ">=9.1.0 <11.0.0"
+  flutter_lints: ">=3.0.0 <7.0.0"
   flutter_test:
     sdk: flutter

@@ -169,8 +169,15 @@ void main() {
       },
       skip: 2,
       expect: () => [
+        // The append is announced before it lands, so the footer spinner is
+        // visible for the whole fetch rather than only after it.
         isA<GenericListReady<int, _Filter>>()
-            .having((s) => s.items, 'items', [1, 2, 3, 4]),
+            .having((s) => s.items, 'items', [1, 2])
+            .having((s) => s.isLoadingMore, 'isLoadingMore', isTrue)
+            .having((s) => s.isLoading, 'isLoading', isFalse),
+        isA<GenericListReady<int, _Filter>>()
+            .having((s) => s.items, 'items', [1, 2, 3, 4])
+            .having((s) => s.isLoadingMore, 'isLoadingMore', isFalse),
       ],
     );
 
@@ -222,7 +229,7 @@ void main() {
         await Future<void>.delayed(Duration.zero);
         bloc.add(const GenericListLoadMore());
       },
-      skip: 2,
+      skip: 3,
       expect: () => [
         isA<GenericListReady<int, _Filter>>()
             .having((s) => s.totalCount, 'totalCount', 50),
@@ -240,7 +247,7 @@ void main() {
         await Future<void>.delayed(Duration.zero);
         bloc.add(const GenericListLoadMore());
       },
-      skip: 2,
+      skip: 3,
       expect: () => [
         isA<GenericListReady<int, _Filter>>()
             .having((s) => s.totalCount, 'totalCount', 48),
@@ -258,7 +265,7 @@ void main() {
         await Future<void>.delayed(Duration.zero);
         bloc.add(const GenericListLoadMore());
       },
-      skip: 2,
+      skip: 3,
       expect: () => [
         isA<AppBlocMessage<GenericListReady<int, _Filter>>>()
             .having((s) => s.errorFailure, 'errorFailure', _failure)
@@ -267,8 +274,10 @@ void main() {
           'not a first-load failure',
           isFalse,
         ),
+        // The footer spinner must clear on failure, or it spins forever.
         isA<GenericListReady<int, _Filter>>()
-            .having((s) => s.items, 'items', [1, 2]),
+            .having((s) => s.items, 'items', [1, 2])
+            .having((s) => s.isLoadingMore, 'isLoadingMore', isFalse),
       ],
     );
 
@@ -402,4 +411,122 @@ void main() {
       },
     );
   });
+
+  group('hasMore', () {
+    blocTest<_TestBloc, AppBlocState<GenericListReady<int, _Filter>>>(
+      'a full first page that already covers the total ends the list',
+      build: () => _TestBloc([
+        const Ok(PagedData(data: [1, 2], totalCount: 2)),
+      ]),
+      act: (bloc) => bloc.add(const GenericListInit()),
+      skip: 1,
+      expect: () => [
+        isA<GenericListReady<int, _Filter>>()
+            .having((s) => s.items, 'items', [1, 2])
+            .having((s) => s.hasMore, 'hasMore', isFalse),
+      ],
+    );
+
+    blocTest<_TestBloc, AppBlocState<GenericListReady<int, _Filter>>>(
+      'a known total stops paging without an extra empty round trip',
+      build: () => _TestBloc([
+        const Ok(PagedData(data: [1, 2], totalCount: 4)),
+        const Ok(PagedData(data: [3, 4], totalCount: 4)),
+      ]),
+      act: (bloc) async {
+        bloc.add(const GenericListInit());
+        await Future<void>.delayed(Duration.zero);
+        bloc.add(const GenericListLoadMore());
+        await Future<void>.delayed(Duration.zero);
+        // Ignored: the total says everything is loaded.
+        bloc.add(const GenericListLoadMore());
+      },
+      verify: (bloc) {
+        expect(bloc.state.ready.items, [1, 2, 3, 4]);
+        expect(bloc.state.ready.hasMore, isFalse);
+        expect(
+          bloc.requested,
+          hasLength(2),
+          reason: 'the total is authoritative, so no third page is fetched',
+        );
+      },
+    );
+
+    blocTest<_TestBloc, AppBlocState<GenericListReady<int, _Filter>>>(
+      'an empty page ends the list even when the total disagrees',
+      build: () => _TestBloc([
+        const Ok(PagedData(data: [1, 2], totalCount: 99)),
+        const Ok(PagedData(data: [], totalCount: 99)),
+      ]),
+      act: (bloc) async {
+        bloc.add(const GenericListInit());
+        await Future<void>.delayed(Duration.zero);
+        bloc.add(const GenericListLoadMore());
+      },
+      verify: (bloc) => expect(
+        bloc.state.ready.hasMore,
+        isFalse,
+        reason: 'trusting the total here would retry the empty page forever',
+      ),
+    );
+
+    blocTest<_TestBloc, AppBlocState<GenericListReady<int, _Filter>>>(
+      'a full page with no reported total still implies more',
+      build: () => _TestBloc([
+        const Ok(PagedData(data: [1, 2])),
+      ]),
+      act: (bloc) => bloc.add(const GenericListInit()),
+      verify: (bloc) => expect(bloc.state.ready.hasMore, isTrue),
+    );
+  });
+
+  group('isLoadingMore', () {
+    blocTest<_TestBloc, AppBlocState<GenericListReady<int, _Filter>>>(
+      'a refresh overtaking an append clears the footer spinner',
+      build: () => _SlowLoadMoreBloc(const []),
+      act: (bloc) async {
+        bloc.add(const GenericListInit());
+        await Future<void>.delayed(Duration.zero);
+        bloc.add(const GenericListLoadMore());
+        await Future<void>.delayed(Duration.zero);
+        bloc.add(const GenericListRefreshed());
+      },
+      wait: const Duration(milliseconds: 100),
+      verify: (bloc) => expect(
+        bloc.state.ready.isLoadingMore,
+        isFalse,
+        reason: 'the discarded append must not leave the spinner stuck on',
+      ),
+    );
+
+    blocTest<_TestBloc, AppBlocState<GenericListReady<int, _Filter>>>(
+      'is never set by a first load or a refresh',
+      build: () => _TestBloc([
+        const Ok(PagedData(data: [1, 2])),
+      ]),
+      act: (bloc) async {
+        bloc.add(const GenericListInit());
+        await Future<void>.delayed(Duration.zero);
+        bloc.add(const GenericListRefreshed());
+      },
+      verify: (bloc) => expect(bloc.state.ready.isLoadingMore, isFalse),
+    );
+  });
+}
+
+/// A bloc whose *append* is slow, so a refresh can overtake it.
+class _SlowLoadMoreBloc extends _TestBloc {
+  _SlowLoadMoreBloc(super.responses);
+
+  int _calls = 0;
+
+  @override
+  Future<Result<PagedData<int>>> fetchPage(_Filter filter) async {
+    requested.add(filter);
+    if (_calls++ == 1) {
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      return const Ok(PagedData(data: [7, 8]));
+    }
+    return const Ok(PagedData(data: [1, 2]));
+  }
 }

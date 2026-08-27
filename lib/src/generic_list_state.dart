@@ -19,13 +19,18 @@ final class GenericListReady<T, F>
     this.activeFilter,
     this.initialLoadFailed = false,
     this.isLoading = false,
+    this.isLoadingMore = false,
     this.totalCount,
   });
 
   /// The items loaded so far, across every page fetched.
   final List<T>? items;
 
-  /// Whether the last page came back full, implying there is more to fetch.
+  /// Whether another page can still be fetched.
+  ///
+  /// When the server reports a [totalCount] that total decides; otherwise a
+  /// full last page is taken to imply more. This says a page *exists*, not
+  /// that one is being fetched — for a footer spinner use [isLoadingMore].
   final bool hasMore;
 
   /// The filter that produced [items].
@@ -36,9 +41,16 @@ final class GenericListReady<T, F>
 
   /// Whether a first page or a refresh is in flight.
   ///
-  /// Appending a page does not set this — [items] stays rendered and the
-  /// list shows its own footer spinner instead.
+  /// Appending a page sets [isLoadingMore] instead, so [items] stays rendered
+  /// and the list shows its own footer spinner rather than a full-screen one.
   final bool isLoading;
+
+  /// Whether another page is being appended right now.
+  ///
+  /// Drive the list's footer spinner from this rather than from [hasMore]:
+  /// [hasMore] only says another page *exists*, so a footer keyed to it spins
+  /// forever between fetches and keeps spinning after an append fails.
+  final bool isLoadingMore;
 
   /// Server-reported total for [activeFilter], from the load that produced
   /// [items].
@@ -56,6 +68,7 @@ final class GenericListReady<T, F>
         activeFilter,
         initialLoadFailed,
         isLoading,
+        isLoadingMore,
         totalCount,
       ];
 }

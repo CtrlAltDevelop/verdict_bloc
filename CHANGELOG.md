@@ -1,3 +1,20 @@
+## 1.1.0
+
+Adds `GenericListReady.isLoadingMore`, which is `true` only while a page is
+being appended. Previously nothing in the state distinguished "another page
+exists" from "another page is loading", so a footer spinner had to be keyed to
+`hasMore` — which spins between fetches and keeps spinning after an append
+fails. `isLoading` is unchanged and still covers a first load or a refresh.
+
+`hasMore` now honours the server's `totalCount` when one is reported: once the
+loaded items cover the total, the list ends. A final page that came back
+exactly full previously cost one extra round trip to discover it was the last.
+With no reported total the behaviour is unchanged — a short page still ends the
+list — and an empty page always ends it, whatever the total claims.
+
+Both changes are additive: `GenericListReady`'s constructor gains an optional
+named parameter, and existing UI keyed to `hasMore` keeps working.
+
 ## 1.0.1
 
 Shortens the package description to pub.dev's 180-character limit and relaxes

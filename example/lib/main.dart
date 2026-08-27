@@ -1,4 +1,4 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verdict_bloc/verdict_bloc.dart';
 
@@ -273,8 +273,10 @@ class _Body extends StatelessWidget {
           return false;
         },
         child: ListView.builder(
-          // One extra row for the footer spinner when more can be loaded.
-          itemCount: items.length + (ready.hasMore ? 1 : 0),
+          // One extra row while a page is actually being appended. Keying this
+          // to `hasMore` instead would spin between fetches and keep spinning
+          // after an append failed.
+          itemCount: items.length + (ready.isLoadingMore ? 1 : 0),
           itemBuilder: (context, index) {
             if (index >= items.length) {
               return const Padding(

@@ -56,7 +56,7 @@ void _onRefresh(Refresh event, Emitter<ProfileState> emit) async {
 
 ```yaml
 dependencies:
-  verdict_bloc: ^0.2.0
+  verdict_bloc: ^1.1.0
 ```
 
 That is the whole install. `Result` and `Failure` come from
@@ -198,9 +198,27 @@ each properly instead of showing a spinner forever:
 - `items == null`, `initialLoadFailed == true` → first load failed; show retry.
 - `items == []` → loaded, genuinely empty.
 
-It also carries `hasMore`, `isLoading`, `activeFilter` and the server's
-`totalCount` — the last one lets a filter sheet show a result count without a
-fetch of its own.
+It also carries `hasMore`, `isLoading`, `isLoadingMore`, `activeFilter` and the
+server's `totalCount` — the last one lets a filter sheet show a result count
+without a fetch of its own.
+
+Drive a footer spinner from `isLoadingMore`, not from `hasMore`:
+
+```dart
+ListView.builder(
+  itemCount: items.length + (ready.isLoadingMore ? 1 : 0),
+  // …
+);
+```
+
+`hasMore` only says another page *exists*, so a footer keyed to it spins
+between fetches and keeps spinning after an append fails. `isLoading` covers a
+first load or a refresh; appending a page sets `isLoadingMore` instead, so the
+items stay on screen.
+
+When the server reports a `totalCount`, that total decides whether another page
+exists — a final page that happens to come back exactly full costs no extra
+empty round trip. With no total, a short page is the only end-of-list signal.
 
 Out-of-order responses are discarded: each fetch takes a sequence number, and
 a response overtaken by a refresh or a filter change is dropped rather than

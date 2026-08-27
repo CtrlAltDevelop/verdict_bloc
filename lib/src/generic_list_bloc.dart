@@ -93,8 +93,27 @@ abstract class GenericListBloc<T, F>
       activeFilter: _activeFilter,
       initialLoadFailed: initialLoadFailed,
       isLoading: isLoading,
+      isLoadingMore: _isLoadingMore,
       totalCount: _totalCount,
     );
+  }
+
+  /// Whether another page exists after one totalling [loadedCount] items,
+  /// whose last response carried [pageLength] items and reported [totalCount].
+  ///
+  /// The server's total wins when it reports one, so a final page that happens
+  /// to come back exactly full does not cost an extra empty round trip. With
+  /// no total, a short page is the only signal that the end was reached.
+  bool _hasMoreAfter({
+    required int loadedCount,
+    required int pageLength,
+    required int? totalCount,
+  }) {
+    // An empty page ends the list whatever the total claims — trusting the
+    // total here would retry the same empty page forever.
+    if (pageLength == 0) return false;
+    if (totalCount != null) return loadedCount < totalCount;
+    return pageLength >= pageSize;
   }
 
   /// Reports [failure], then settles back on [settled].
@@ -169,6 +188,9 @@ abstract class GenericListBloc<T, F>
     if (loaded == null || !_hasMore || _isLoadingMore) return;
 
     _isLoadingMore = true;
+    // Emit before awaiting so the footer spinner is visible for the whole
+    // fetch, not just after it lands.
+    emit(_buildReady());
     final requestId = ++_requestId;
     final result = await fetchPage(
       withPaging(
@@ -183,13 +205,18 @@ abstract class GenericListBloc<T, F>
     switch (result) {
       case Ok(:final value):
         final page = value.data ?? const [];
+        // Keep the total the first page reported when a later page omits it —
+        // plenty of APIs send the count only on the first response.
+        final total = value.totalCount ?? _totalCount;
         emit(
           _buildReady(
             items: [...loaded, ...page],
-            hasMore: page.length >= pageSize,
-            // Keep the total the first page reported when a later page omits
-            // it — plenty of APIs send the count only on the first response.
-            totalCount: value.totalCount ?? _totalCount,
+            hasMore: _hasMoreAfter(
+              loadedCount: loaded.length + page.length,
+              pageLength: page.length,
+              totalCount: total,
+            ),
+            totalCount: total,
           ),
         );
       case Err(:final failure):
@@ -215,7 +242,11 @@ abstract class GenericListBloc<T, F>
         emit(
           _buildReady(
             items: page,
-            hasMore: page.length >= pageSize,
+            hasMore: _hasMoreAfter(
+              loadedCount: page.length,
+              pageLength: page.length,
+              totalCount: value.totalCount,
+            ),
             activeFilter: activeFilter,
             totalCount: value.totalCount,
           ),
