@@ -1,3 +1,9 @@
+## 1.1.1
+
+Documentation only — no API or behaviour change. The CHANGELOG and README now
+state the toolchain floor (Dart 3.0 / Flutter 3.10) and the widened dependency
+ranges that 1.1.0 actually shipped, including `flutter_bloc` 8 support.
+
 ## 1.1.0
 
 Lowers the minimum toolchain from Dart 3.13 / Flutter 3.47 to **Dart 3.0 /
