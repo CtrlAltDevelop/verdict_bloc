@@ -8,7 +8,14 @@ on:
 
 jobs:
   test:
+    name: test (${{ matrix.resolution }} versions)
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Floated constraints are only real if both ends are exercised:
+        # `downgrade` pins every dependency to the lowest allowed version.
+        resolution: [highest, lowest]
     steps:
       - uses: actions/checkout@v4
 
@@ -20,13 +27,26 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Downgrade to the lowest allowed versions
+        if: matrix.resolution == 'lowest'
+        run: flutter pub downgrade
+
       - name: Analyze
         run: flutter analyze --fatal-infos
 
       - name: Run tests
         run: flutter test
 
-      - name: Analyze example
+  example:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Analyze and test the example
         working-directory: example
         run: |
           flutter pub get

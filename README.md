@@ -59,6 +59,9 @@ dependencies:
   verdict_bloc: ^1.1.0
 ```
 
+Requires Dart 3.0 / Flutter 3.10 or newer, and works with `flutter_bloc` 8 or
+9.
+
 That is the whole install. `Result` and `Failure` come from
 [`verdict`](https://pub.dev/packages/verdict), which this package depends on
 and re-exports in full, so a single `package:verdict_bloc/verdict_bloc.dart`

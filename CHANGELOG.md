@@ -1,5 +1,22 @@
 ## 1.1.0
 
+Lowers the minimum toolchain from Dart 3.13 / Flutter 3.47 to **Dart 3.0 /
+Flutter 3.10**, and widens every dependency to a range instead of a caret pin:
+
+| Dependency     | Was       | Now                |
+| -------------- | --------- | ------------------ |
+| `equatable`    | `^2.1.0`  | `>=2.0.5 <3.0.0`   |
+| `flutter_bloc` | `^9.1.1`  | `>=8.1.0 <10.0.0`  |
+| `verdict`      | `^1.0.0`  | `>=1.1.0 <2.0.0`   |
+
+Dart 3.0 is the package's real floor — it uses sealed classes, class modifiers
+and pattern matching, and nothing newer. `flutter_bloc` 8 is now supported
+alongside 9. The whole suite is verified against the lowest allowed version of
+every dependency as well as the highest, and CI runs both.
+
+This requires `verdict` 1.1.0, which lowered its own floor to Dart 3.0; the API
+is unchanged from 1.0.0.
+
 Adds `GenericListReady.isLoadingMore`, which is `true` only while a page is
 being appended. Previously nothing in the state distinguished "another page
 exists" from "another page is loading", so a footer spinner had to be keyed to
