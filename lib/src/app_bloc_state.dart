@@ -130,11 +130,11 @@ final class AppBlocMessage<R> extends AppBlocState<R> {
 
   @override
   AppBlocStateKind get kind => switch (type) {
-        MessageType.error => AppBlocStateKind.error,
-        MessageType.success => AppBlocStateKind.success,
-        MessageType.warning => AppBlocStateKind.warning,
-        MessageType.info => AppBlocStateKind.info,
-      };
+    MessageType.error => AppBlocStateKind.error,
+    MessageType.success => AppBlocStateKind.success,
+    MessageType.warning => AppBlocStateKind.warning,
+    MessageType.info => AppBlocStateKind.info,
+  };
 
   @override
   Failure? get errorFailure {
@@ -155,11 +155,11 @@ final class AppBlocMessage<R> extends AppBlocState<R> {
 
   @override
   List<Object?> get props => [
-        previous,
-        type,
-        title,
-        description,
-        referenceId,
-        failure,
-      ];
+    previous,
+    type,
+    title,
+    description,
+    referenceId,
+    failure,
+  ];
 }

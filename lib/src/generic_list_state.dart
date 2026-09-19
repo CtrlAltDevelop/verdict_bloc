@@ -63,12 +63,12 @@ final class GenericListReady<T, F>
 
   @override
   List<Object?> get props => [
-        items,
-        hasMore,
-        activeFilter,
-        initialLoadFailed,
-        isLoading,
-        isLoadingMore,
-        totalCount,
-      ];
+    items,
+    hasMore,
+    activeFilter,
+    initialLoadFailed,
+    isLoading,
+    isLoadingMore,
+    totalCount,
+  ];
 }

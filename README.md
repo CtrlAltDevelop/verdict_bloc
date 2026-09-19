@@ -1,5 +1,10 @@
 # verdict_bloc
 
+[![pub package](https://img.shields.io/pub/v/verdict_bloc.svg)](https://pub.dev/packages/verdict_bloc)
+[![pub points](https://img.shields.io/pub/points/verdict_bloc)](https://pub.dev/packages/verdict_bloc/score)
+[![CI](https://github.com/CtrlAltDevelop/verdict_bloc/actions/workflows/ci.yml/badge.svg)](https://github.com/CtrlAltDevelop/verdict_bloc/actions/workflows/ci.yml)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/CtrlAltDevelop/verdict_bloc/blob/main/LICENSE)
+
 BLoC state where **transient states carry the last known good data**.
 Reporting an error or a success never blanks the screen behind it.
 
@@ -56,10 +61,10 @@ void _onRefresh(Refresh event, Emitter<ProfileState> emit) async {
 
 ```yaml
 dependencies:
-  verdict_bloc: ^1.1.0
+  verdict_bloc: ">=1.2.0 <2.0.0"
 ```
 
-Requires Dart 3.0 / Flutter 3.10 or newer, and works with `flutter_bloc` 8 or
+Requires Dart 3.12.0 / Flutter 3.44.0 or newer, and works with `flutter_bloc`
 9.
 
 That is the whole install. `Result` and `Failure` come from

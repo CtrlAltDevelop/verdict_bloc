@@ -44,16 +44,16 @@ class AppBlocConsumer<B extends BlocBase<S>, S extends AppBlocState<R>, R>
 
   @override
   Widget build(BuildContext context) => BlocConsumer<B, S>(
-        listenWhen: (_, current) => current.kind != AppBlocStateKind.ready,
-        // Build for every ready state, including the one a bloc settles back on
-        // after reporting a message. That settle-back is not redundant: the
-        // snapshot carried by the message routinely differs from what was last
-        // built — a failed save clears `isSaving`, for instance — so skipping it
-        // would strand the UI on a spinner.
-        buildWhen: (_, current) => current.kind == AppBlocStateKind.ready,
-        listener: _handleTransient,
-        builder: (context, state) => builder(context, state.ready),
-      );
+    listenWhen: (_, current) => current.kind != AppBlocStateKind.ready,
+    // Build for every ready state, including the one a bloc settles back on
+    // after reporting a message. That settle-back is not redundant: the
+    // snapshot carried by the message routinely differs from what was last
+    // built — a failed save clears `isSaving`, for instance — so skipping it
+    // would strand the UI on a spinner.
+    buildWhen: (_, current) => current.kind == AppBlocStateKind.ready,
+    listener: _handleTransient,
+    builder: (context, state) => builder(context, state.ready),
+  );
 
   void _handleTransient(BuildContext context, S state) {
     final delegate = AppBlocFeedback.maybeOf(context);

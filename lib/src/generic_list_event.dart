@@ -62,9 +62,9 @@ final class GenericListFilterApplied<T, F> extends GenericListEvent<T, F> {
 
   @override
   List<Object?> get props => [
-        filter,
-        prefetchedItems,
-        prefetchedHasMore,
-        prefetchedTotalCount,
-      ];
+    filter,
+    prefetchedItems,
+    prefetchedHasMore,
+    prefetchedTotalCount,
+  ];
 }

@@ -52,18 +52,17 @@ class ProfileApi {
 /// One ready state for the whole screen. Everything the UI needs to draw
 /// lives here, and it is never thrown away.
 final class ProfileReady extends AppBlocState<ProfileReady> {
-  const ProfileReady(
-      {this.profile, this.isLoading = false, this.isSaving = false});
+  const ProfileReady({
+    this.profile,
+    this.isLoading = false,
+    this.isSaving = false,
+  });
 
   final Profile? profile;
   final bool isLoading;
   final bool isSaving;
 
-  ProfileReady copyWith({
-    Profile? profile,
-    bool? isLoading,
-    bool? isSaving,
-  }) =>
+  ProfileReady copyWith({Profile? profile, bool? isLoading, bool? isSaving}) =>
       ProfileReady(
         profile: profile ?? this.profile,
         isLoading: isLoading ?? this.isLoading,
@@ -199,18 +198,17 @@ class ProfilePage
 
   @override
   Widget buildBody(BuildContext context, ProfileReady ready) => Scaffold(
-        appBar: AppBar(title: const Text('Profile')),
-        body: switch (ready) {
-          ProfileReady(isLoading: true) => const Center(
-              child: CircularProgressIndicator(),
-            ),
-          ProfileReady(profile: null) => const Center(
-              child: Text("Couldn't load the profile."),
-            ),
-          ProfileReady(:final profile?) =>
-            _Form(ready: ready, profile: profile),
-        },
-      );
+    appBar: AppBar(title: const Text('Profile')),
+    body: switch (ready) {
+      ProfileReady(isLoading: true) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+      ProfileReady(profile: null) => const Center(
+        child: Text("Couldn't load the profile."),
+      ),
+      ProfileReady(:final profile?) => _Form(ready: ready, profile: profile),
+    },
+  );
 }
 
 class _Form extends StatelessWidget {
@@ -240,8 +238,9 @@ class _Form extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           FilledButton(
-            onPressed:
-                ready.isSaving ? null : () => bloc.add(const ProfileSaved()),
+            onPressed: ready.isSaving
+                ? null
+                : () => bloc.add(const ProfileSaved()),
             child: ready.isSaving
                 ? const SizedBox.square(
                     dimension: 18,

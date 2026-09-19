@@ -50,10 +50,10 @@ class ItemFilter {
   final int take;
 
   ItemFilter copyWith({String? query, int? skip, int? take}) => ItemFilter(
-        query: query ?? this.query,
-        skip: skip ?? this.skip,
-        take: take ?? this.take,
-      );
+    query: query ?? this.query,
+    skip: skip ?? this.skip,
+    take: take ?? this.take,
+  );
 }
 
 // ─── Bloc ───────────────────────────────────────────────────────────────────
@@ -74,15 +74,11 @@ class ItemsBloc extends GenericListBloc<String, ItemFilter> {
     ItemFilter filter, {
     required int skip,
     required int take,
-  }) =>
-      filter.copyWith(skip: skip, take: take);
+  }) => filter.copyWith(skip: skip, take: take);
 
   @override
-  Future<Result<PagedData<String>>> fetchPage(ItemFilter filter) => _api.fetch(
-        query: filter.query,
-        skip: filter.skip,
-        take: filter.take,
-      );
+  Future<Result<PagedData<String>>> fetchPage(ItemFilter filter) =>
+      _api.fetch(query: filter.query, skip: filter.skip, take: filter.take);
 }
 
 // ─── Feedback ───────────────────────────────────────────────────────────────
@@ -127,12 +123,12 @@ class SnackBarFeedback implements AppBlocFeedbackDelegate {
   /// Copy comes from the failure's *type*, never from `Failure.title` — that
   /// field holds a diagnostic origin, not display text.
   String _describe(Failure failure) => switch (failure) {
-        ApiFailure(:final message) => message,
-        NetworkFailure() => 'Check your connection and try again.',
-        AuthFailure() => 'Please sign in again.',
-        CancelledFailure() => 'Cancelled.',
-        UnknownFailure() => 'Something went wrong.',
-      };
+    ApiFailure(:final message) => message,
+    NetworkFailure() => 'Check your connection and try again.',
+    AuthFailure() => 'Please sign in again.',
+    CancelledFailure() => 'Cancelled.',
+    UnknownFailure() => 'Something went wrong.',
+  };
 }
 
 // ─── UI ─────────────────────────────────────────────────────────────────────
@@ -142,14 +138,14 @@ class ExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppBlocFeedback(
-        // One delegate above the navigator, and every screen reports the same way.
-        delegate: const SnackBarFeedback(),
-        child: MaterialApp(
-          title: 'verdict_bloc',
-          theme: ThemeData(colorSchemeSeed: Colors.indigo, useMaterial3: true),
-          home: const HomePage(),
-        ),
-      );
+    // One delegate above the navigator, and every screen reports the same way.
+    delegate: const SnackBarFeedback(),
+    child: MaterialApp(
+      title: 'verdict_bloc',
+      theme: ThemeData(colorSchemeSeed: Colors.indigo, useMaterial3: true),
+      home: const HomePage(),
+    ),
+  );
 }
 
 /// Two samples: the pattern by hand, and the same pattern wrapped up in
@@ -159,44 +155,46 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('verdict_bloc')),
-        body: ListView(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.person_outline),
-              title: const Text('Profile form'),
-              subtitle: const Text(
-                'A hand-written bloc. Saving fails every other time and the form '
-                'never loses what you typed.',
-              ),
-              isThreeLine: true,
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(builder: (_) => const ProfilePage()),
-              ),
-            ),
-            const Divider(height: 1),
-            ListTile(
-              leading: const Icon(Icons.list_alt_outlined),
-              title: const Text('Paginated list'),
-              subtitle: const Text(
-                'GenericListBloc: infinite scroll, pull-to-refresh and a filter, '
-                'against an API that fails every third request.',
-              ),
-              isThreeLine: true,
-              onTap: () => Navigator.of(
-                context,
-              ).push(
-                  MaterialPageRoute<void>(builder: (_) => const ItemsPage())),
-            ),
-          ],
+    appBar: AppBar(title: const Text('verdict_bloc')),
+    body: ListView(
+      children: [
+        ListTile(
+          leading: const Icon(Icons.person_outline),
+          title: const Text('Profile form'),
+          subtitle: const Text(
+            'A hand-written bloc. Saving fails every other time and the form '
+            'never loses what you typed.',
+          ),
+          isThreeLine: true,
+          onTap: () => Navigator.of(
+            context,
+          ).push(MaterialPageRoute<void>(builder: (_) => const ProfilePage())),
         ),
-      );
+        const Divider(height: 1),
+        ListTile(
+          leading: const Icon(Icons.list_alt_outlined),
+          title: const Text('Paginated list'),
+          subtitle: const Text(
+            'GenericListBloc: infinite scroll, pull-to-refresh and a filter, '
+            'against an API that fails every third request.',
+          ),
+          isThreeLine: true,
+          onTap: () => Navigator.of(
+            context,
+          ).push(MaterialPageRoute<void>(builder: (_) => const ItemsPage())),
+        ),
+      ],
+    ),
+  );
 }
 
-class ItemsPage extends AppBlocPage<
-    ItemsBloc,
-    AppBlocState<GenericListReady<String, ItemFilter>>,
-    GenericListReady<String, ItemFilter>> {
+class ItemsPage
+    extends
+        AppBlocPage<
+          ItemsBloc,
+          AppBlocState<GenericListReady<String, ItemFilter>>,
+          GenericListReady<String, ItemFilter>
+        > {
   const ItemsPage({super.key});
 
   @override
@@ -303,15 +301,12 @@ class _Centered extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(message),
-            if (action case final action?) ...[
-              const SizedBox(height: 12),
-              action
-            ],
-          ],
-        ),
-      );
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(message),
+        if (action case final action?) ...[const SizedBox(height: 12), action],
+      ],
+    ),
+  );
 }

@@ -1,66 +1,28 @@
+# The gate in front of main. Everything it runs lives once in
+# CtrlAltDevelop/ci-workflows, so a fix there fixes all of the packages at
+# once — format, analyze --fatal-infos, test, the example, a CHANGELOG entry
+# for the pubspec version, and the pub.dev score with no points lost.
+
 name: CI
 
 on:
+  pull_request:
+    branches: [main]
   push:
     branches: [main]
-  pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
 jobs:
-  test:
-    name: test (${{ matrix.resolution }} versions)
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        # Floated constraints are only real if both ends are exercised:
-        # `downgrade` pins every dependency to the lowest allowed version.
-        resolution: [highest, lowest]
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Downgrade to the lowest allowed versions
-        if: matrix.resolution == 'lowest'
-        run: flutter pub downgrade
-
-      - name: Analyze
-        run: flutter analyze --fatal-infos
-
-      - name: Run tests
-        run: flutter test
-
-  example:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-      - run: flutter pub get
-      - name: Analyze and test the example
-        working-directory: example
-        run: |
-          flutter pub get
-          flutter analyze --fatal-infos
-          flutter test
-
-  publish-dry-run:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-      - run: flutter pub get
-      - name: Check the package is publishable
-        run: flutter pub publish --dry-run
+  package:
+    name: Package
+    uses: CtrlAltDevelop/ci-workflows/.github/workflows/dart-package.yml@v1.1.0
+    permissions:
+      contents: read
+    with:
+      sdk: flutter

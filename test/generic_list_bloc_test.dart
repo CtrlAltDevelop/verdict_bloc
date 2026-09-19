@@ -84,7 +84,7 @@ void main() {
     blocTest<_TestBloc, AppBlocState<GenericListReady<int, _Filter>>>(
       'requests the first page with paging applied',
       build: () => _TestBloc([
-        const Ok(PagedData(data: [1]))
+        const Ok(PagedData(data: [1])),
       ]),
       act: (bloc) => bloc.add(const GenericListInit()),
       verify: (bloc) {
@@ -96,7 +96,7 @@ void main() {
     blocTest<_TestBloc, AppBlocState<GenericListReady<int, _Filter>>>(
       'ignores a second init',
       build: () => _TestBloc([
-        const Ok(PagedData(data: [1]))
+        const Ok(PagedData(data: [1])),
       ]),
       act: (bloc) async {
         bloc.add(const GenericListInit());
@@ -109,13 +109,16 @@ void main() {
     blocTest<_TestBloc, AppBlocState<GenericListReady<int, _Filter>>>(
       'a short first page means there is no more to load',
       build: () => _TestBloc([
-        const Ok(PagedData(data: [1]))
+        const Ok(PagedData(data: [1])),
       ]),
       act: (bloc) => bloc.add(const GenericListInit()),
       skip: 1,
       expect: () => [
-        isA<GenericListReady<int, _Filter>>()
-            .having((s) => s.hasMore, 'hasMore', isFalse),
+        isA<GenericListReady<int, _Filter>>().having(
+          (s) => s.hasMore,
+          'hasMore',
+          isFalse,
+        ),
       ],
     );
 
@@ -198,7 +201,7 @@ void main() {
     blocTest<_TestBloc, AppBlocState<GenericListReady<int, _Filter>>>(
       'does nothing before anything has loaded',
       build: () => _TestBloc([
-        const Ok(PagedData(data: [1]))
+        const Ok(PagedData(data: [1])),
       ]),
       act: (bloc) => bloc.add(const GenericListLoadMore()),
       expect: () => <Object>[],
@@ -208,7 +211,7 @@ void main() {
     blocTest<_TestBloc, AppBlocState<GenericListReady<int, _Filter>>>(
       'does nothing when the last page was short',
       build: () => _TestBloc([
-        const Ok(PagedData(data: [1]))
+        const Ok(PagedData(data: [1])),
       ]),
       act: (bloc) async {
         bloc.add(const GenericListInit());
@@ -231,8 +234,11 @@ void main() {
       },
       skip: 3,
       expect: () => [
-        isA<GenericListReady<int, _Filter>>()
-            .having((s) => s.totalCount, 'totalCount', 50),
+        isA<GenericListReady<int, _Filter>>().having(
+          (s) => s.totalCount,
+          'totalCount',
+          50,
+        ),
       ],
     );
 
@@ -249,8 +255,11 @@ void main() {
       },
       skip: 3,
       expect: () => [
-        isA<GenericListReady<int, _Filter>>()
-            .having((s) => s.totalCount, 'totalCount', 48),
+        isA<GenericListReady<int, _Filter>>().having(
+          (s) => s.totalCount,
+          'totalCount',
+          48,
+        ),
       ],
     );
 
@@ -269,11 +278,12 @@ void main() {
       expect: () => [
         isA<AppBlocMessage<GenericListReady<int, _Filter>>>()
             .having((s) => s.errorFailure, 'errorFailure', _failure)
-            .having((s) => s.ready.items, 'items survive', [1, 2]).having(
-          (s) => s.ready.initialLoadFailed,
-          'not a first-load failure',
-          isFalse,
-        ),
+            .having((s) => s.ready.items, 'items survive', [1, 2])
+            .having(
+              (s) => s.ready.initialLoadFailed,
+              'not a first-load failure',
+              isFalse,
+            ),
         // The footer spinner must clear on failure, or it spins forever.
         isA<GenericListReady<int, _Filter>>()
             .having((s) => s.items, 'items', [1, 2])
@@ -316,8 +326,9 @@ void main() {
         isA<GenericListReady<int, _Filter>>()
             .having((s) => s.isLoading, 'isLoading', isTrue)
             .having((s) => s.items, 'keeps old items while loading', [1, 2]),
-        isA<GenericListReady<int, _Filter>>()
-            .having((s) => s.items, 'items', [9]),
+        isA<GenericListReady<int, _Filter>>().having((s) => s.items, 'items', [
+          9,
+        ]),
       ],
     );
   });
@@ -340,15 +351,15 @@ void main() {
             .having((s) => s.isLoading, 'isLoading', isTrue)
             .having((s) => s.items, 'clears while loading', isNull),
         isA<GenericListReady<int, _Filter>>()
-            .having((s) => s.items, 'items', [7]).having(
-                (s) => s.activeFilter?.query, 'activeFilter', 'x'),
+            .having((s) => s.items, 'items', [7])
+            .having((s) => s.activeFilter?.query, 'activeFilter', 'x'),
       ],
     );
 
     blocTest<_TestBloc, AppBlocState<GenericListReady<int, _Filter>>>(
       'adopts prefetched results without fetching',
       build: () => _TestBloc([
-        const Ok(PagedData(data: [1]))
+        const Ok(PagedData(data: [1])),
       ]),
       act: (bloc) => bloc.add(
         const GenericListFilterApplied(
@@ -371,7 +382,7 @@ void main() {
     blocTest<_TestBloc, AppBlocState<GenericListReady<int, _Filter>>>(
       'appends onto prefetched results using the new filter',
       build: () => _TestBloc([
-        const Ok(PagedData(data: [7, 8]))
+        const Ok(PagedData(data: [7, 8])),
       ]),
       act: (bloc) async {
         bloc.add(
@@ -403,11 +414,9 @@ void main() {
       wait: const Duration(milliseconds: 100),
       verify: (bloc) {
         expect(bloc.requested, hasLength(2));
-        expect(
-          bloc.state.ready.items,
-          [9],
-          reason: 'the slow first response must not overwrite the refresh',
-        );
+        expect(bloc.state.ready.items, [
+          9,
+        ], reason: 'the slow first response must not overwrite the refresh');
       },
     );
   });
