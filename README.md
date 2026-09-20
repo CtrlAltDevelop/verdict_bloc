@@ -61,7 +61,7 @@ void _onRefresh(Refresh event, Emitter<ProfileState> emit) async {
 
 ```yaml
 dependencies:
-  verdict_bloc: ">=1.2.0 <2.0.0"
+  verdict_bloc: ">=2.0.1 <3.0.0"
 ```
 
 Requires Dart 3.12.0 / Flutter 3.44.0 or newer, and works with `flutter_bloc`

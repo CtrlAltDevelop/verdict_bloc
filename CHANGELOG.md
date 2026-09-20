@@ -1,3 +1,9 @@
+## 2.0.1
+
+Documentation only — no API or behaviour change. The README install snippet still
+pointed at the 1.x range; it now shows `>=2.0.1 <3.0.0`. The example app now
+depends on `verdict` 2.0.0, matching the package.
+
 ## 2.0.0
 
 - **Breaking: requires `verdict` 2.0.0** (`>=2.0.0 <3.0.0`), up from
