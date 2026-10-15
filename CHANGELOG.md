@@ -1,10 +1,13 @@
-## 2.1.0
+## 2.2.0
 
 - **New: `GenericListItemsUpdated`** rewrites the loaded items in place —
   removing a deleted item, toggling a flag the server already confirmed —
   without refetching the page.
 - Adds a `publish.yml` workflow that publishes to pub.dev from a GitHub
   release, matching the other packages here.
+- **`verdict` is floored at 2.2.0**, up from 2.0.0 — both intermediate
+  releases are additive only, so this is not a breaking change for consumers.
+- The example now runs on `material_ui` instead of `flutter/material`.
 
 ## 2.0.1
 

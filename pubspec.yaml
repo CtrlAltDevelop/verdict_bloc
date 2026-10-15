@@ -1,6 +1,6 @@
 name: verdict_bloc
 description: BLoC states that keep the last known good data through error and loading, plus a paginated list bloc, built on verdict's Result and Failure.
-version: 2.1.0
+version: 2.2.0
 homepage: https://github.com/CtrlAltDevelop
 repository: https://github.com/CtrlAltDevelop/verdict_bloc
 issue_tracker: https://github.com/CtrlAltDevelop/verdict_bloc/issues
@@ -24,7 +24,7 @@ dependencies:
     sdk: flutter
   equatable: ">=3.0.0 <4.0.0"
   flutter_bloc: ">=9.0.0 <10.0.0"
-  verdict: ">=2.0.0 <3.0.0"
+  verdict: ">=2.2.0 <3.0.0"
 
 dev_dependencies:
   bloc_test: ">=10.0.0 <11.0.0"
