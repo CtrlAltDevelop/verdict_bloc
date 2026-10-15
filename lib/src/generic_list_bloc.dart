@@ -52,6 +52,7 @@ abstract class GenericListBloc<T, F>
     on<GenericListRefreshed<T, F>>(_onRefreshed);
     on<GenericListLoadMore<T, F>>(_onLoadMore);
     on<GenericListFilterApplied<T, F>>(_onFilterApplied);
+    on<GenericListItemsUpdated<T, F>>(_onItemsUpdated);
   }
 
   /// How many items to request per page. Override to change it.
@@ -222,6 +223,15 @@ abstract class GenericListBloc<T, F>
       case Err(:final failure):
         _emitFailure(emit, failure, _buildReady());
     }
+  }
+
+  void _onItemsUpdated(
+    GenericListItemsUpdated<T, F> event,
+    Emitter<AppBlocState<GenericListReady<T, F>>> emit,
+  ) {
+    final loaded = _items;
+    if (loaded == null) return;
+    emit(_buildReady(items: event.updater(loaded)));
   }
 
   Future<void> _fetch(

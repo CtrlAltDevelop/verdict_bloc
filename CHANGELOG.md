@@ -1,3 +1,11 @@
+## 2.1.0
+
+- **New: `GenericListItemsUpdated`** rewrites the loaded items in place —
+  removing a deleted item, toggling a flag the server already confirmed —
+  without refetching the page.
+- Adds a `publish.yml` workflow that publishes to pub.dev from a GitHub
+  release, matching the other packages here.
+
 ## 2.0.1
 
 Documentation only — no API or behaviour change. The README install snippet still

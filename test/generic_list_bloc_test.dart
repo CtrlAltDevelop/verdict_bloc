@@ -402,6 +402,36 @@ void main() {
     );
   });
 
+  group('GenericListItemsUpdated', () {
+    blocTest<_TestBloc, AppBlocState<GenericListReady<int, _Filter>>>(
+      'rewrites the loaded items without fetching',
+      build: () => _TestBloc([
+        const Ok(PagedData(data: [1, 2, 3])),
+      ]),
+      act: (bloc) async {
+        bloc.add(const GenericListInit());
+        await Future<void>.delayed(Duration.zero);
+        bloc.add(
+          GenericListItemsUpdated(
+            (items) => items.where((i) => i != 2).toList(),
+          ),
+        );
+      },
+      verify: (bloc) {
+        expect(bloc.state.ready.items, [1, 3]);
+        expect(bloc.requested, hasLength(1), reason: 'no refetch happens');
+      },
+    );
+
+    blocTest<_TestBloc, AppBlocState<GenericListReady<int, _Filter>>>(
+      'does nothing before anything has loaded',
+      build: () => _TestBloc(const []),
+      act: (bloc) =>
+          bloc.add(GenericListItemsUpdated((items) => [...items, 1])),
+      expect: () => <dynamic>[],
+    );
+  });
+
   group('out-of-order responses', () {
     blocTest<_SlowFirstBloc, AppBlocState<GenericListReady<int, _Filter>>>(
       'a stale in-flight fetch never lands over newer data',

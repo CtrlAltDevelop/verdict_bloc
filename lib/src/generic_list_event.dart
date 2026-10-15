@@ -68,3 +68,20 @@ final class GenericListFilterApplied<T, F> extends GenericListEvent<T, F> {
     prefetchedTotalCount,
   ];
 }
+
+/// Rewrites the loaded items in place, without a fetch.
+///
+/// For a local edit — removing a deleted item, toggling a flag the server
+/// already confirmed — that doesn't warrant refetching the page. Ignored
+/// before anything has loaded.
+final class GenericListItemsUpdated<T, F> extends GenericListEvent<T, F> {
+  /// Creates an event that replaces the loaded items with
+  /// `updater(current items)`.
+  const GenericListItemsUpdated(this.updater);
+
+  /// Returns the new items from the currently loaded ones.
+  final List<T> Function(List<T> items) updater;
+
+  @override
+  List<Object?> get props => [updater];
+}
